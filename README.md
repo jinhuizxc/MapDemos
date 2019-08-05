@@ -4,7 +4,6 @@
 - 多渠道配置不同包名，打包测试;
 - 申请高德地图测试正常显示;
 
-## 仿微信发位置demo
 - 高德地图配置:
 > 包名查询:
 E:\Java\jdk1.8.0_201\bin>keytool -v -list -keystore E:\workspace_android\Map\MapDemos\app\MyApp.jks
