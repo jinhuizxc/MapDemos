@@ -1,5 +1,10 @@
 apply plugin: 'com.android.application'
 
+// 打包时间
+static def releaseTime() {
+    return new Date().format("yyyy-MM-dd", TimeZone.getTimeZone("UTC"))
+}
+
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.2"
@@ -12,6 +17,14 @@ android {
             storePassword "123456"
             keyPassword "123456"
         }
+
+        app1{
+            storePassword "123456"
+            storeFile file('app1.jks')
+            keyAlias "app1"
+            keyPassword "123456"
+        }
+
 
         debug {
             keyAlias 'MyApp'
@@ -29,15 +42,20 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
+
+
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 
-            signingConfig signingConfigs.release
+            // 默认appkey
+//            manifestPlaceholders = [AMAP_KEY: "a3a9b039394f795cfda395578b2b1b06"]
 
+            signingConfig signingConfigs.release
         }
+
 
         debug {
             minifyEnabled false
@@ -49,6 +67,50 @@ android {
 
     }
 
+    productFlavors {
+
+        myapp {
+            manifestPlaceholders = [str: "releaseStr", package_name: "com.example.jh.mapdemo"]
+            // 每个环境包名不同
+            applicationId "com.example.jh.mapdemo"
+            // 动态添加 string.xml 字段；
+            // 注意，这里是添加，在 string.xml 不能有这个字段，会重名！！！
+            resValue "string", "app_name", "仿微信发送位置"
+            versionCode 1
+            versionName "1.0"
+            resValue "bool", "isrRank", 'true'
+            manifestPlaceholders = [ENVIRONMENT: "仿微信发送位置",
+                                    app_icon   : "@mipmap/ic_launcher",
+                                    // 配置高德地图
+                                    AMAP_KEY: "a3a9b039394f795cfda395578b2b1b06"]
+            //签名文件
+            signingConfig signingConfigs.release
+        }
+
+        app1 {
+            manifestPlaceholders = [str: "devStr", package_name: "com.test.app1"]
+            applicationId "com.test.app1"
+            versionCode 2
+            versionName "2.0"
+            resValue "string", "app_name", "测试"
+            resValue "bool", "isrRank", 'true'
+            manifestPlaceholders = [ENVIRONMENT: "测试",
+                                    app_icon   : "@mipmap/ic_launcher",
+                                    // 配置高德地图
+                                    AMAP_KEY: "12822d8407a7e6a17ab60afe14d907df"]
+            //签名文件
+            signingConfig signingConfigs.app1
+        }
+
+    }
+
+    // //移除lint检测的error
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
 
 
 }
